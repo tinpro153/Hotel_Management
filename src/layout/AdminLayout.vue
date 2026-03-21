@@ -1,30 +1,60 @@
 <template>
-  <a-layout style="min-height:100vh; background:#f5f7fb">
-    <a-layout-sider collapsible v-model:collapsed="collapsed" :width="220" :collapsedWidth="80" class="ad-sider">
+  <a-layout class="ad-root">
+    <a-layout-sider
+      collapsible
+      v-model:collapsed="collapsed"
+      :width="220"
+      :collapsedWidth="80"
+      class="ad-sider"
+    >
       <div class="ad-logo" @click="go('/admin')">
         <span v-if="!collapsed">Hotel Admin</span>
         <span v-else>HA</span>
       </div>
-      
 
-      <a-menu theme="dark" mode="inline" :inline-collapsed="collapsed" :selected-keys="[selectedKey]">
-        <a-menu-item key="dashboard" @click="go('/admin')">Dashboard</a-menu-item>
-        <a-menu-item key="rooms" @click="go('/admin/rooms')">Phòng</a-menu-item>
-        <a-menu-item key="roomTypes" @click="go('/admin/room-types')">Loại phòng</a-menu-item>
-        <a-menu-item key="bookings" @click="go('/admin/bookings')">Đặt phòng</a-menu-item>
-        <a-menu-item key="customers" @click="go('/admin/customers')">Khách hàng</a-menu-item>
+      <a-menu
+        theme="dark"
+        mode="inline"
+        :selectedKeys="[selectedKey]"
+        class="ad-menu"
+      >
+        <a-menu-item key="dashboard" @click="go('/admin')">
+          <template #icon><DashboardOutlined /></template>
+          <span>Dashboard</span>
+        </a-menu-item>
+
+        <a-menu-item key="rooms" @click="go('/admin/rooms')">
+          <template #icon><ShopOutlined /></template>
+          <span>Phòng</span>
+        </a-menu-item>
+
+        <a-menu-item key="roomTypes" @click="go('/admin/room-types')">
+          <template #icon><TagsOutlined /></template>
+          <span>Loại phòng</span>
+        </a-menu-item>
+
+        <a-menu-item key="bookings" @click="go('/admin/bookings')">
+          <template #icon><ProfileOutlined /></template>
+          <span>Đặt phòng</span>
+        </a-menu-item>
+
+        <a-menu-item key="customers" @click="go('/admin/customers')">
+          <template #icon><TeamOutlined /></template>
+          <span>Khách hàng</span>
+        </a-menu-item>
+
         <a-menu-divider />
-        <a-menu-item key="back" @click="go('/')">Về Client</a-menu-item>
+
+        <a-menu-item key="back" @click="go('/')">
+          <template #icon><HomeOutlined /></template>
+          <span>Về Client</span>
+        </a-menu-item>
       </a-menu>
     </a-layout-sider>
-    
 
     <a-layout>
       <a-layout-header class="ad-header">
         <div class="ad-title">Hotel Management</div>
-        <a-space>
-          <a-button @click="go('/admin/login')">Login</a-button>
-        </a-space>
       </a-layout-header>
 
       <a-layout-content class="ad-content">
@@ -40,7 +70,14 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-
+import {
+  DashboardOutlined,
+  HomeOutlined,
+  ShopOutlined,
+  TagsOutlined,
+  ProfileOutlined,
+  TeamOutlined
+} from '@ant-design/icons-vue'
 
 const collapsed = ref(false)
 const router = useRouter()
@@ -61,7 +98,20 @@ function go(path) {
 </script>
 
 <style scoped>
-.ad-sider{ box-shadow: 8px 0 18px rgba(16,24,40,.12); }
+.ad-root{
+  min-height: 100vh;
+  background:#f5f7fb;
+}
+
+.ad-sider{
+  box-shadow: 8px 0 18px rgba(16,24,40,.12);
+}
+
+/* Fix: tránh menu bị “lọt”/cắt trên mobile và khi collapse */
+.ad-menu{
+  padding-bottom: 10px;
+}
+
 .ad-logo{
   height: 44px;
   margin: 12px;
@@ -74,7 +124,13 @@ function go(path) {
   justify-content:center;
   cursor:pointer;
   user-select:none;
+
+  /* Fix: không cho chữ xuống dòng/cắt xấu */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
 .ad-header{
   position: sticky;
   top: 0;
@@ -86,12 +142,31 @@ function go(path) {
   padding: 0 16px;
   box-shadow: 0 6px 18px rgba(16,24,40,.08);
 }
-.ad-title{ font-weight: 700; color:#111827; }
-.ad-content{ padding: 18px 16px; }
+
+.ad-title{
+  font-weight: 800;
+  color:#111827;
+}
+
+.ad-content{
+  padding: 18px 16px;
+}
+
 .ad-card{
   background:#fff;
   border-radius: 14px;
   padding: 16px;
   min-height: calc(100vh - 140px);
+}
+
+/* Mobile: sidebar + content đỡ chật */
+@media (max-width: 576px){
+  .ad-content{
+    padding: 12px 10px;
+  }
+  .ad-card{
+    padding: 12px;
+    border-radius: 12px;
+  }
 }
 </style>

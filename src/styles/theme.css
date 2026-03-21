@@ -1,0 +1,56 @@
+:root{
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --primary: #1677ff;
+  --radius: 16px;
+}
+
+html, body{
+  height: 100%;
+}
+
+body{
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Container dùng cho Client */
+.app-container{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Card “xịn” hơn */
+.ui-card{
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, .06);
+  border: 1px solid rgba(15, 23, 42, .06);
+}
+
+/* Title/Muted */
+.ui-title{
+  font-weight: 900;
+  color: var(--text);
+}
+.ui-muted{
+  color: var(--muted);
+}
+
+/* Nút primary nổi hơn một chút */
+.ant-btn-primary{
+  box-shadow: 0 10px 18px rgba(22, 119, 255, .22);
+}
+
+/* Table bo góc nhẹ */
+.ant-table{
+  border-radius: 14px;
+}
+
+/* Mobile spacing */
+@media (max-width: 576px){
+  .app-container{ padding: 12px; }
+}

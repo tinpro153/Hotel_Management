@@ -7,11 +7,12 @@
           <div class="hero-title">Hotel Management</div>
         </div>
 
-        <div class="hero-sub">Quản lý phòng • đặt phòng • khách hàng</div>
+       <div class="hero-sub">Quản lý phòng • đặt phòng • khách hàng</div>
 
-        <a-space style="margin-top:12px">
-          <a-button type="primary" @click="goRooms">Xem phòng</a-button>
-        </a-space>
+<a-space style="margin-top:10px" wrap>
+  <a-tag color="blue">Phòng trống: {{ availableCount }}</a-tag>
+  <a-tag color="volcano">Đang có khách: {{ occupiedCount }}</a-tag>
+</a-space>
       </div>
     </div>
   </a-card>
@@ -98,8 +99,10 @@ function goRooms() {
 
 /* không dùng ảnh nền nữa -> dùng gradient cho gọn */
 .hero-bg{
-  height: 220px;
-  background: radial-gradient(1000px 320px at 10% 20%, #2563eb 0%, #0b1220 55%, #020617 100%);
+  height: 240px;
+  background:
+    radial-gradient(900px 320px at 10% 20%, rgba(37,99,235,.95) 0%, rgba(2,6,23,.95) 55%, rgba(2,6,23,1) 100%),
+    linear-gradient(135deg, #0b1220 0%, #020617 100%);
 }
 
 .hero-overlay{
