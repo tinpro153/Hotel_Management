@@ -33,6 +33,12 @@
           <span>Loại phòng</span>
         </a-menu-item>
 
+        <!-- NEW: Inventory -->
+        <a-menu-item key="inventory" @click="go('/admin/inventory')">
+          <template #icon><CalendarOutlined /></template>
+          <span>Tồn kho</span>
+        </a-menu-item>
+
         <a-menu-item key="bookings" @click="go('/admin/bookings')">
           <template #icon><ProfileOutlined /></template>
           <span>Đặt phòng</span>
@@ -76,7 +82,8 @@ import {
   ShopOutlined,
   TagsOutlined,
   ProfileOutlined,
-  TeamOutlined
+  TeamOutlined,
+  CalendarOutlined // NEW
 } from '@ant-design/icons-vue'
 
 const collapsed = ref(false)
@@ -87,6 +94,7 @@ const selectedKey = computed(() => {
   if (route.path === '/admin') return 'dashboard'
   if (route.path.startsWith('/admin/rooms')) return 'rooms'
   if (route.path.startsWith('/admin/room-types')) return 'roomTypes'
+  if (route.path.startsWith('/admin/inventory')) return 'inventory' // NEW
   if (route.path.startsWith('/admin/bookings')) return 'bookings'
   if (route.path.startsWith('/admin/customers')) return 'customers'
   return 'dashboard'

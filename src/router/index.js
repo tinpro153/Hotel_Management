@@ -10,6 +10,7 @@ import RoomDetailPage from '@/page/client/RoomDetailPage.vue'
 import CartPage from '@/page/client/CartPage.vue'
 import CheckoutPage from '@/page/client/CheckoutPage.vue'
 import BookingsPage from '@/page/client/BookingsPage.vue'
+import WriteReviewPage from '@/page/client/WriteReviewPage.vue'
 
 // Admin pages
 // import AdminLoginPage from '@/page/admin/AdminLoginPage.vue'
@@ -18,6 +19,7 @@ import AdminRoomsPage from '@/page/admin/AdminRoomsPage.vue'
 import AdminRoomTypesPage from '@/page/admin/AdminRoomTypesPage.vue'
 import AdminBookingsPage from '@/page/admin/AdminBookingsPage.vue'
 import AdminCustomersPage from '@/page/admin/AdminCustomersPage.vue'
+import AdminInventoryPage from '@/page/admin/AdminInventoryPage.vue'
 
 const routes = [
   {
@@ -29,7 +31,9 @@ const routes = [
       { path: 'rooms/:id', name: 'RoomDetail', component: RoomDetailPage, props: true },
       { path: 'cart', name: 'Cart', component: CartPage },
       { path: 'checkout', name: 'Checkout', component: CheckoutPage },
-      { path: 'bookings', name: 'Bookings', component: BookingsPage }
+      { path: 'bookings', name: 'Bookings', component: BookingsPage },
+      {path: '/write-review',name: 'WriteReview',component: WriteReviewPage}
+
     ]
   },
   // { path: '/admin/login', name: 'AdminLogin', component: AdminLoginPage },
@@ -41,7 +45,8 @@ const routes = [
       { path: 'rooms', name: 'AdminRooms', component: AdminRoomsPage },
       { path: 'room-types', name: 'AdminRoomTypes', component: AdminRoomTypesPage },
       { path: 'bookings', name: 'AdminBookings', component: AdminBookingsPage },
-      { path: 'customers', name: 'AdminCustomers', component: AdminCustomersPage }
+      { path: 'customers', name: 'AdminCustomers', component: AdminCustomersPage },
+      { path: 'inventory', name: 'AdminInventory', component: AdminInventoryPage }
     ]
   }
 ]
