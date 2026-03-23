@@ -1,54 +1,47 @@
 :root{
-  --bg: #f5f7fb;
+  --bk-blue: #003580;      /* Booking-like blue */
+  --bk-blue-2: #00224f;
+  --bk-yellow: #febb02;    /* Booking-like yellow */
+  --bg: #f5f5f5;
   --card: #ffffff;
   --text: #0f172a;
   --muted: #64748b;
-  --primary: #1677ff;
-  --radius: 16px;
+  --radius: 14px;
 }
 
-html, body{
-  height: 100%;
-}
-
+html, body{ height: 100%; }
 body{
   margin: 0;
   background: var(--bg);
   color: var(--text);
 }
 
-/* Container dùng cho Client */
+/* Container */
 .app-container{
   max-width: 1200px;
   margin: 0 auto;
   padding: 16px;
 }
 
-/* Card “xịn” hơn */
+/* Card look */
 .ui-card{
   border-radius: var(--radius);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, .06);
-  border: 1px solid rgba(15, 23, 42, .06);
+  border: 1px solid rgba(15, 23, 42, .08);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .06);
 }
 
-/* Title/Muted */
-.ui-title{
-  font-weight: 900;
-  color: var(--text);
-}
-.ui-muted{
-  color: var(--muted);
-}
-
-/* Nút primary nổi hơn một chút */
+/* Buttons: làm primary giống Booking hơn */
 .ant-btn-primary{
-  box-shadow: 0 10px 18px rgba(22, 119, 255, .22);
+  background: var(--bk-blue);
+  border-color: var(--bk-blue);
+}
+.ant-btn-primary:hover{
+  background: #0a4aa6;
+  border-color: #0a4aa6;
 }
 
-/* Table bo góc nhẹ */
-.ant-table{
-  border-radius: 14px;
-}
+/* Tags */
+.ui-muted{ color: var(--muted); }
 
 /* Mobile spacing */
 @media (max-width: 576px){

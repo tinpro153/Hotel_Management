@@ -1,22 +1,204 @@
 export const roomTypes = [
-  { id: 1, name: 'Standard', basePrice: 450000 },
-  { id: 2, name: 'Deluxe', basePrice: 650000 },
-  { id: 3, name: 'Suite', basePrice: 1200000 }
+  { id: 1, name: 'Standard', description: 'Phòng tiêu chuẩn, phù hợp 1–2 khách.', priceBase: 550000, suggestedCapacity: 2 },
+  { id: 2, name: 'Deluxe', description: 'Phòng rộng hơn, view đẹp, tiện nghi đầy đủ.', priceBase: 850000, suggestedCapacity: 2 },
+  { id: 3, name: 'Suite', description: 'Hạng cao cấp, có phòng khách, trải nghiệm sang trọng.', priceBase: 1450000, suggestedCapacity: 3 },
+  { id: 4, name: 'Family', description: 'Phòng gia ��ình, phù hợp nhóm 3–5 khách.', priceBase: 1200000, suggestedCapacity: 4 }
 ]
 
 export const rooms = [
-  { id: 101, name: 'Phòng 101', typeId: 1, capacity: 2, price: 450000, status: 'available', amenities: ['Wifi', 'TV', 'Điều hòa'] },
-  { id: 102, name: 'Phòng 102', typeId: 1, capacity: 2, price: 450000, status: 'occupied', amenities: ['Wifi', 'TV'] },
-  { id: 201, name: 'Phòng 201', typeId: 2, capacity: 3, price: 650000, status: 'available', amenities: ['Wifi', 'TV', 'Bồn tắm'] },
-  { id: 301, name: 'Suite 301', typeId: 3, capacity: 4, price: 1200000, status: 'maintenance', amenities: ['Wifi', 'TV', 'Bồn tắm', 'Ban công'] }
+  // Đà Nẵng
+  {
+    id: 101,
+    name: 'Deluxe 101 - Sea View',
+    typeId: 2,
+    price: 950000,
+    capacity: 2,
+    status: 'available',
+    amenities: ['Wifi', 'TV', 'Điều hòa', 'Ban công', 'View biển'],
+    city: 'Đà Nẵng',
+    area: 'Sơn Trà',
+    address: '123 Võ Nguyên Giáp, Sơn Trà, Đà Nẵng'
+  },
+  {
+    id: 102,
+    name: 'Standard 102 - City View',
+    typeId: 1,
+    price: 590000,
+    capacity: 2,
+    status: 'available',
+    amenities: ['Wifi', 'TV', 'Điều hòa'],
+    city: 'Đà Nẵng',
+    area: 'Hải Châu',
+    address: '45 Bạch Đằng, Hải Châu, Đà Nẵng'
+  },
+  {
+    id: 103,
+    name: 'Suite 103 - Premium',
+    typeId: 3,
+    price: 1650000,
+    capacity: 3,
+    status: 'occupied',
+    amenities: ['Wifi', 'TV', 'Bồn tắm', 'Ban công', 'Mini bar'],
+    city: 'Đà Nẵng',
+    area: 'Ngũ Hành Sơn',
+    address: '09 Trần Bạch Đằng, Ngũ Hành Sơn, Đà Nẵng'
+  },
+  {
+    id: 104,
+    name: 'Family 104 - Beachside',
+    typeId: 4,
+    price: 1350000,
+    capacity: 4,
+    status: 'available',
+    amenities: ['Wifi', 'TV', '2 Giường', 'Điều hòa', 'Gần biển'],
+    city: 'Đà Nẵng',
+    area: 'Ngũ Hành Sơn',
+    address: '88 Nguyễn Văn Thoại, Ngũ Hành Sơn, Đà Nẵng'
+  },
+
+  // Hà Nội
+  {
+    id: 201,
+    name: 'Standard 201 - Old Quarter',
+    typeId: 1,
+    price: 650000,
+    capacity: 2,
+    status: 'available',
+    amenities: ['Wifi', 'TV', 'Điều hòa', 'Gần phố cổ'],
+    city: 'Hà Nội',
+    area: 'Hoàn Kiếm',
+    address: '12 Hàng Bè, Hoàn Kiếm, Hà Nội'
+  },
+  {
+    id: 202,
+    name: 'Deluxe 202 - Lake View',
+    typeId: 2,
+    price: 980000,
+    capacity: 2,
+    status: 'maintenance',
+    amenities: ['Wifi', 'TV', 'Bồn tắm', 'View hồ'],
+    city: 'Hà Nội',
+    area: 'Tây Hồ',
+    address: '18 Xuân Diệu, Tây Hồ, Hà Nội'
+  },
+  {
+    id: 203,
+    name: 'Suite 203 - Executive',
+    typeId: 3,
+    price: 1850000,
+    capacity: 3,
+    status: 'available',
+    amenities: ['Wifi', 'TV', 'Bàn làm việc', 'Phòng khách'],
+    city: 'Hà Nội',
+    area: 'Ba Đình',
+    address: '30 Liễu Giai, Ba Đình, Hà Nội'
+  },
+
+  // TP.HCM
+  {
+    id: 301,
+    name: 'Deluxe 301 - Downtown',
+    typeId: 2,
+    price: 1100000,
+    capacity: 2,
+    status: 'available',
+    amenities: ['Wifi', 'TV', 'Điều hòa', 'Gần trung tâm'],
+    city: 'TP. Hồ Chí Minh',
+    area: 'Quận 1',
+    address: '98 Nguyễn Huệ, Quận 1, TP.HCM'
+  },
+  {
+    id: 302,
+    name: 'Suite 302 - Skyline',
+    typeId: 3,
+    price: 2100000,
+    capacity: 3,
+    status: 'occupied',
+    amenities: ['Wifi', 'TV', 'View thành phố', 'Mini bar'],
+    city: 'TP. Hồ Chí Minh',
+    area: 'Quận 1',
+    address: '15 Đồng Khởi, Quận 1, TP.HCM'
+  },
+  {
+    id: 303,
+    name: 'Family 303 - Riverside',
+    typeId: 4,
+    price: 1550000,
+    capacity: 4,
+    status: 'available',
+    amenities: ['Wifi', 'TV', '2 Giường', 'Gần sông', 'Bếp nhỏ'],
+    city: 'TP. Hồ Chí Minh',
+    area: 'Thủ Đức',
+    address: '22 Xa lộ Hà Nội, Thủ Đức, TP.HCM'
+  },
+
+  // Đà Lạt
+  {
+    id: 401,
+    name: 'Standard 401 - Cozy',
+    typeId: 1,
+    price: 520000,
+    capacity: 2,
+    status: 'available',
+    amenities: ['Wifi', 'TV', 'Sưởi', 'View đồi'],
+    city: 'Đà Lạt',
+    area: 'Phường 1',
+    address: '10 Bùi Thị Xuân, Phường 1, Đà Lạt'
+  },
+  {
+    id: 402,
+    name: 'Deluxe 402 - Pine View',
+    typeId: 2,
+    price: 820000,
+    capacity: 2,
+    status: 'available',
+    amenities: ['Wifi', 'TV', 'Sưởi', 'Ban công'],
+    city: 'Đà Lạt',
+    area: 'Phường 8',
+    address: '55 Phù Đổng Thiên Vương, Phường 8, Đà Lạt'
+  }
 ]
 
+/**
+ * NEW: customers + bookings để AdminBookingsPage/AdminCustomersPage không warning
+ * Đây là mock data tối thiểu.
+ */
 export const customers = [
-  { id: 1, name: 'Nguyễn Văn A', phone: '0900000001', email: 'a@gmail.com' },
-  { id: 2, name: 'Trần Thị B', phone: '0900000002', email: 'b@gmail.com' }
+  { id: 1, name: 'Nguyễn Văn A', phone: '0901000001', email: 'a@example.com' },
+  { id: 2, name: 'Trần Thị B', phone: '0901000002', email: 'b@example.com' },
+  { id: 3, name: 'Lê Văn C', phone: '0901000003', email: 'c@example.com' }
 ]
 
+// booking: liên kết customerId + roomId
 export const bookings = [
-  { id: 1, customerId: 1, roomId: 101, checkIn: '2026-03-22', checkOut: '2026-03-24', status: 'confirmed', total: 900000 },
-  { id: 2, customerId: 2, roomId: 201, checkIn: '2026-03-25', checkOut: '2026-03-26', status: 'pending', total: 650000 }
+  {
+    id: 1001,
+    roomId: 103,
+    customerId: 1,
+    checkIn: '2026-03-22',
+    checkOut: '2026-03-24',
+    guests: 2,
+    status: 'confirmed',
+    note: 'Nhận phòng sau 14:00'
+  },
+  {
+    id: 1002,
+    roomId: 302,
+    customerId: 2,
+    checkIn: '2026-03-25',
+    checkOut: '2026-03-27',
+    guests: 2,
+    status: 'confirmed',
+    note: ''
+  },
+  {
+    id: 1003,
+    roomId: 201,
+    customerId: 3,
+    checkIn: '2026-03-28',
+    checkOut: '2026-03-29',
+    guests: 1,
+    status: 'pending',
+    note: ''
+  }
 ]

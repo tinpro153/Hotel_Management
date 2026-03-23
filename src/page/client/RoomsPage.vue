@@ -2,11 +2,14 @@
   <a-row :gutter="[16,16]">
     <!-- Filters -->
     <a-col :xs="24" :lg="7">
-      <a-card title="Bộ lọc" :bodyStyle="{ padding: '12px' }">
+      <a-card class="ui-card bk-filter" title="Bộ lọc" :bodyStyle="{ padding: '12px' }">
         <a-space direction="vertical" style="width:100%" size="middle">
           <div>
-            <div class="label">Tìm theo tên</div>
-            <a-input v-model:value="keyword" placeholder="Ví dụ: 101, Suite..." allowClear />
+            <div class="label">Tìm theo địa điểm / tên phòng</div>
+            <a-input v-model:value="keyword" placeholder="Ví dụ: Đà Nẵng, Sơn Trà, 101..." allowClear />
+            <div class="ui-muted" style="margin-top:6px" v-if="fromSearchBar">
+              Đang lọc theo: <b>{{ fromSearchBar }}</b>
+            </div>
           </div>
 
           <div>
@@ -26,16 +29,14 @@
           <div>
             <div class="label">Khoảng giá / đêm</div>
             <a-slider
-  v-model:value="priceRange"
-  range
-  :min="minPrice"
-  :max="maxPrice"
-  :step="50000"
-  :tooltip="{ formatter: formatMoney }"
-/>
-            <div class="muted">
-              {{ formatMoney(priceRange[0]) }} — {{ formatMoney(priceRange[1]) }}
-            </div>
+              v-model:value="priceRange"
+              range
+              :min="minPrice"
+              :max="maxPrice"
+              :step="50000"
+              :tooltip="{ formatter: formatMoney }"
+            />
+            <div class="ui-muted">{{ formatMoney(priceRange[0]) }} — {{ formatMoney(priceRange[1]) }}</div>
           </div>
 
           <div>
@@ -48,7 +49,7 @@
             </a-select>
           </div>
 
-          <a-space>
+          <a-space wrap>
             <a-button @click="reset">Reset</a-button>
             <a-button type="primary" @click="goCart">Giỏ đặt</a-button>
           </a-space>
@@ -58,61 +59,72 @@
 
     <!-- List -->
     <a-col :xs="24" :lg="17">
-      <a-card :title="`Phòng (${filtered.length})`" :bodyStyle="{ padding: '12px' }">
-        <a-row :gutter="[16,16]">
-          <a-col v-for="r in filtered" :key="r.id" :xs="24" :md="12">
-            <a-card class="room-card" hoverable>
-              <template #cover>
-                <div class="room-cover" :style="{ backgroundImage: `url(${roomImage(r.id)})` }">
-                  <div class="room-cover-overlay">
+      <a-card class="ui-card" :bodyStyle="{ padding: '12px' }">
+        <div class="list-head">
+          <div class="list-title">Chỗ ở phù hợp</div>
+          <div class="ui-muted">{{ filtered.length }} phòng</div>
+        </div>
+
+        <a-space direction="vertical" style="width:100%" size="middle">
+          <div v-for="r in filtered" :key="r.id" class="bk-room ui-card">
+            <div class="bk-room-img" :style="{ backgroundImage: `url(${roomImage(r.id)})` }"></div>
+
+            <div class="bk-room-body">
+              <div class="bk-room-top">
+                <div>
+                  <div class="bk-room-name">{{ r.name }}</div>
+
+                  <div class="bk-room-location ui-muted">
+                    {{ (r.area ? r.area + ', ' : '') + (r.city || '') }}
+                  </div>
+
+                  <div class="bk-room-meta">
                     <a-tag :color="statusColor(r.status)">{{ r.status }}</a-tag>
+                    <span class="dot">•</span>
+                    <span><b>Sức chứa:</b> {{ r.capacity }}</span>
+                    <span class="dot">•</span>
+                    <span><b>Loại:</b> {{ typeName(r.typeId) }}</span>
                   </div>
                 </div>
-              </template>
 
-              <div class="room-title">
-                <div class="name">{{ r.name }}</div>
-                <div class="price">{{ formatMoney(r.price) }} <span class="muted">/ đêm</span></div>
+                <div class="bk-price-box">
+                  <div class="bk-price">{{ formatMoney(r.price) }}₫</div>
+                  <div class="ui-muted">/đêm</div>
+                </div>
               </div>
 
-              <div class="meta">
-                <span><b>Sức chứa:</b> {{ r.capacity }}</span>
-                <span class="dot">•</span>
-                <span><b>Loại:</b> {{ typeName(r.typeId) }}</span>
+              <div class="bk-amenities">
+                <a-tag v-for="a in r.amenities.slice(0, 4)" :key="a">{{ a }}</a-tag>
+                <a-tag v-if="r.amenities.length > 4">+{{ r.amenities.length - 4 }}</a-tag>
               </div>
 
-              <div class="amenities">
-                <a-tag v-for="a in r.amenities.slice(0, 3)" :key="a">{{ a }}</a-tag>
-                <a-tag v-if="r.amenities.length > 3">+{{ r.amenities.length - 3 }}</a-tag>
+              <div class="bk-actions">
+                <a-button type="primary" @click="goDetail(r.id)">Xem phòng</a-button>
+                <a-button :disabled="r.status !== 'available'" @click="quickBook(r)">Đặt nhanh</a-button>
               </div>
+            </div>
+          </div>
 
-              <a-space>
-                <a-button type="primary" @click="goDetail(r.id)">Xem chi tiết</a-button>
-                <a-button :disabled="r.status !== 'available'" @click="quickBook(r)">
-                  Đặt nhanh
-                </a-button>
-              </a-space>
-            </a-card>
-          </a-col>
-        </a-row>
-
-        <a-empty v-if="filtered.length === 0" description="Không có phòng phù hợp" />
+          <a-empty v-if="filtered.length === 0" description="Không có phòng phù hợp" />
+        </a-space>
       </a-card>
     </a-col>
   </a-row>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { rooms, roomTypes } from '@/mock/hotel'
 import { useBookingCartStore } from '@/stores/bookingCart.js'
 
 const router = useRouter()
+const route = useRoute()
 const cart = useBookingCartStore()
 
 const keyword = ref('')
+const fromSearchBar = ref('')
 const status = ref(undefined)
 const minCapacity = ref(1)
 const sort = ref('price_asc')
@@ -122,10 +134,33 @@ const minPrice = Math.min(...prices)
 const maxPrice = Math.max(...prices)
 const priceRange = ref([minPrice, maxPrice])
 
+// Đồng bộ từ search bar (query)
+watch(
+  () => route.query,
+  (q) => {
+    const kw = (q.q || '').toString()
+    keyword.value = kw
+    fromSearchBar.value = kw
+
+    const g = Number(q.guests || 1)
+    minCapacity.value = Number.isFinite(g) ? Math.max(1, g) : 1
+  },
+  { immediate: true }
+)
+
 const filtered = computed(() => {
+  const kw = (keyword.value || '').trim().toLowerCase()
+
   const list = rooms
     .filter(r => {
-      const okKeyword = !keyword.value || r.name.toLowerCase().includes(keyword.value.toLowerCase())
+      const okKeyword =
+        !kw ||
+        r.name?.toLowerCase().includes(kw) ||
+        String(r.id).includes(kw) ||
+        (r.city || '').toLowerCase().includes(kw) ||
+        (r.area || '').toLowerCase().includes(kw) ||
+        (r.address || '').toLowerCase().includes(kw)
+
       const okStatus = !status.value || r.status === status.value
       const okCap = r.capacity >= (minCapacity.value || 1)
       const okPrice = r.price >= priceRange.value[0] && r.price <= priceRange.value[1]
@@ -149,13 +184,12 @@ const filtered = computed(() => {
 function goDetail(id) {
   router.push({ name: 'RoomDetail', params: { id } })
 }
-
 function goCart() {
   router.push('/cart')
 }
-
 function reset() {
   keyword.value = ''
+  fromSearchBar.value = ''
   status.value = undefined
   minCapacity.value = 1
   sort.value = 'price_asc'
@@ -163,7 +197,6 @@ function reset() {
 }
 
 function quickBook(r) {
-  // mock quick booking: add 1-night from today->tomorrow style value
   const checkIn = '2026-03-22'
   const checkOut = '2026-03-23'
   cart.addRoom({
@@ -180,50 +213,117 @@ function quickBook(r) {
 function typeName(typeId) {
   return roomTypes.find(t => t.id === typeId)?.name || '—'
 }
-
 function statusColor(s) {
   if (s === 'available') return 'green'
   if (s === 'occupied') return 'volcano'
   if (s === 'maintenance') return 'gold'
   return 'blue'
 }
-
 function formatMoney(v) {
   return new Intl.NumberFormat('vi-VN').format(v)
 }
-
-// Ảnh placeholder theo id (không cần tải ảnh thật)
 function roomImage(id) {
-  // picsum có thể đổi ảnh theo seed
-  return `https://picsum.photos/seed/room-${id}/800/420`
+  return `https://picsum.photos/seed/room-${id}/800/520`
 }
 </script>
 
 <style scoped>
-.label{ font-weight: 600; margin-bottom: 6px; }
-.muted{ color:#6b7280; font-size: 12px; }
-.room-card :deep(.ant-card-body){ padding: 12px; }
-.room-cover{
-  height: 170px;
+.label{ font-weight: 800; margin-bottom: 6px; }
+.dot{ margin: 0 8px; color:#9ca3af; }
+
+.bk-filter{
+  position: sticky;
+  top: 88px;
+}
+
+.list-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  margin-bottom: 10px;
+}
+.list-title{
+  font-weight: 950;
+  font-size: 16px;
+}
+
+.bk-room{
+  display:grid;
+  grid-template-columns: 260px 1fr;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.bk-room-img{
+  border-radius: 12px;
+  height: 180px;
   background-size: cover;
   background-position: center;
 }
-.room-cover-overlay{
+
+.bk-room-body{
   display:flex;
-  justify-content:flex-end;
-  padding: 10px;
-  background: linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,0));
+  flex-direction:column;
+  gap: 10px;
 }
-.room-title{
+
+.bk-room-top{
   display:flex;
   justify-content:space-between;
-  align-items:flex-start;
-  gap: 8px;
-  margin-top: 4px;
+  gap: 12px;
 }
-.room-title .name{ font-weight: 700; }
-.room-title .price{ font-weight: 800; color:#0f172a; }
-.meta{ color:#374151; margin: 6px 0 8px; }
-.dot{ margin: 0 6px; color:#9ca3af; }
-.amenities{ margin-bottom: 10px; }
+
+.bk-room-name{
+  font-weight: 950;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.bk-room-location{
+  margin-top: 6px;
+}
+
+.bk-room-meta{
+  margin-top: 6px;
+  color:#334155;
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap: 6px;
+}
+
+.bk-price-box{
+  text-align:right;
+  min-width: 120px;
+}
+.bk-price{
+  font-weight: 950;
+  font-size: 20px;
+  color:#0f172a;
+}
+
+.bk-amenities :deep(.ant-tag){
+  margin-bottom: 6px;
+}
+
+.bk-actions{
+  display:flex;
+  gap: 10px;
+  flex-wrap:wrap;
+  margin-top: auto;
+}
+
+@media (max-width: 768px){
+  .bk-filter{ position: static; top: auto; }
+  .bk-room{
+    grid-template-columns: 1fr;
+  }
+  .bk-room-img{
+    height: 200px;
+  }
+  .bk-price-box{
+    text-align:left;
+  }
+}
 </style>
