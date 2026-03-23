@@ -182,6 +182,7 @@ import dayjs from 'dayjs'
 import { rooms, roomTypes } from '@/mock/hotel'
 import { useBookingCartStore } from '@/stores/bookingCart.js'
 import { useReviewsStore } from '@/stores/reviews.js'
+import { roomGallery } from '@/utils/roomImages.js' // ✅ NEW
 
 const route = useRoute()
 const router = useRouter()
@@ -191,16 +192,8 @@ const reviewsStore = useReviewsStore()
 const roomId = computed(() => Number(route.params.id))
 const room = computed(() => rooms.find(r => r.id === roomId.value))
 
-const images = computed(() => {
-  const id = roomId.value || 0
-  return [
-    `https://picsum.photos/seed/room-${id}-1/1200/700`,
-    `https://picsum.photos/seed/room-${id}-2/1200/700`,
-    `https://picsum.photos/seed/room-${id}-3/1200/700`,
-    `https://picsum.photos/seed/room-${id}-4/1200/700`,
-    `https://picsum.photos/seed/room-${id}-5/1200/700`
-  ]
-})
+// ✅ đồng bộ gallery theo helper (cover của Home/Rooms = ảnh[0] của gallery)
+const images = computed(() => roomGallery(room.value, 5))
 
 const previewOpen = ref(false)
 const previewIndex = ref(0)

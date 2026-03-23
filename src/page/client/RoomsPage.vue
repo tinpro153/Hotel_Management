@@ -67,7 +67,8 @@
 
         <a-space direction="vertical" style="width:100%" size="middle">
           <div v-for="r in filtered" :key="r.id" class="bk-room ui-card">
-            <div class="bk-room-img" :style="{ backgroundImage: `url(${roomImage(r.id)})` }"></div>
+            <!-- ✅ đồng bộ ảnh (Home + Rooms) -->
+            <div class="bk-room-img" :style="{ backgroundImage: `url(${roomCover(r)})` }"></div>
 
             <div class="bk-room-body">
               <div class="bk-room-top">
@@ -118,6 +119,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { rooms, roomTypes } from '@/mock/hotel'
 import { useBookingCartStore } from '@/stores/bookingCart.js'
+import { roomCover } from '@/utils/roomImages.js' // ✅ NEW
 
 const router = useRouter()
 const route = useRoute()
@@ -221,9 +223,6 @@ function statusColor(s) {
 }
 function formatMoney(v) {
   return new Intl.NumberFormat('vi-VN').format(v)
-}
-function roomImage(id) {
-  return `https://picsum.photos/seed/room-${id}/800/520`
 }
 </script>
 
