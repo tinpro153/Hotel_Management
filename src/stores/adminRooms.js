@@ -1,50 +1,72 @@
 import { defineStore } from 'pinia'
 import { rooms as seedRooms } from '@/mock/hotel'
 
-const STORAGE_KEY = 'hotel_admin_rooms_v1'
+const STORAGE_KEY = 'admin_rooms_v1'
+
+function normalizeSeed(list) {
+  return (list || []).map(r => ({
+    id: Number(r.id),
+    name: r.name || `Phòng ${r.id}`,
+    typeId: Number(r.typeId || 1),
+    capacity: Number(r.capacity || 2),
+    price: Number(r.price || 0),
+    status: r.status || 'available',
+    amenities: Array.isArray(r.amenities) ? r.amenities : []
+  }))
+}
 
 function load() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : null
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    if (!Array.isArray(parsed)) return null
+    return parsed
   } catch {
     return null
   }
 }
 
-function save(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+function save(list) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list))
 }
 
 export const useAdminRoomsStore = defineStore('adminRooms', {
   state: () => ({
-    rooms: load() || seedRooms.map(r => ({ ...r }))
+    rooms: load() ?? normalizeSeed(seedRooms)
   }),
-  getters: {
-    byId: (state) => (id) => state.rooms.find(r => r.id === Number(id))
-  },
+
   actions: {
-    resetSeed() {
-      this.rooms = seedRooms.map(r => ({ ...r }))
+    resetSeed(roomsArg) {
+      const base = Array.isArray(roomsArg) && roomsArg.length ? roomsArg : seedRooms
+      this.rooms = normalizeSeed(base)
       save(this.rooms)
     },
-    create(room) {
-      // require unique id
-      if (this.rooms.some(r => r.id === Number(room.id))) {
-        throw new Error('ID phòng đã tồn tại')
-      }
-      this.rooms.unshift({ ...room, id: Number(room.id) })
+
+    create(payload) {
+      const id = Number(payload.id)
+      if (!id) throw new Error('ID không hợp lệ')
+      if (this.rooms.some(r => Number(r.id) === id)) throw new Error('ID đã tồn tại')
+
+      this.rooms.push({ ...payload, id })
       save(this.rooms)
     },
-    update(id, patch) {
-      const idx = this.rooms.findIndex(r => r.id === Number(id))
+
+    update(id, payload) {
+      const idx = this.rooms.findIndex(r => Number(r.id) === Number(id))
       if (idx === -1) throw new Error('Không tìm thấy phòng')
-      this.rooms[idx] = { ...this.rooms[idx], ...patch, id: Number(id) }
+
+      this.rooms[idx] = { ...this.rooms[idx], ...payload, id: Number(id) }
       save(this.rooms)
     },
+
     remove(id) {
-      this.rooms = this.rooms.filter(r => r.id !== Number(id))
+      this.rooms = this.rooms.filter(r => Number(r.id) !== Number(id))
       save(this.rooms)
+    },
+
+    clearStorage() {
+      localStorage.removeItem(STORAGE_KEY)
     }
   }
 })

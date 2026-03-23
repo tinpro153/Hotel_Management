@@ -1,0 +1,102 @@
+/* ===== UI Polish: Booking-like (no backend needed) ===== */
+:root{
+  --bk-blue: #003580;
+  --bk-blue-2: #0a58ca;
+  --bk-yellow: #febb02;
+  --bk-text: #0f172a;
+  --bk-muted: #64748b;
+
+  --ui-radius: 16px;
+  --ui-radius-sm: 12px;
+
+  --ui-border: rgba(15, 23, 42, .10);
+  --ui-border-2: rgba(15, 23, 42, .08);
+
+  --ui-shadow: 0 10px 26px rgba(15, 23, 42, .06);
+  --ui-shadow-hover: 0 18px 40px rgba(15, 23, 42, .10);
+
+  --ui-bg: #f5f7fb;
+}
+
+html, body{
+  background: var(--ui-bg);
+}
+
+body{
+  color: var(--bk-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ui-muted{
+  color: var(--bk-muted);
+}
+
+.ui-card{
+  border: 1px solid var(--ui-border-2);
+  border-radius: var(--ui-radius);
+  box-shadow: var(--ui-shadow);
+  background: #fff;
+}
+
+/* Hover polish for interactive cards */
+.ui-card-hover{
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  cursor: pointer;
+}
+.ui-card-hover:hover{
+  transform: translateY(-2px);
+  box-shadow: var(--ui-shadow-hover);
+  border-color: var(--ui-border);
+}
+
+/* Better Ant Card headers */
+.ui-card :deep(.ant-card-head){
+  border-bottom: 1px solid rgba(15,23,42,.06);
+  border-top-left-radius: var(--ui-radius);
+  border-top-right-radius: var(--ui-radius);
+}
+.ui-card :deep(.ant-card-head-title){
+  font-weight: 900;
+  color: var(--bk-text);
+}
+
+/* Buttons: closer to Booking vibe */
+:deep(.ant-btn-primary){
+  background: var(--bk-blue);
+  border-color: var(--bk-blue);
+  font-weight: 800;
+}
+:deep(.ant-btn-primary:hover),
+:deep(.ant-btn-primary:focus){
+  background: var(--bk-blue-2);
+  border-color: var(--bk-blue-2);
+}
+
+/* Inputs focus ring */
+:deep(.ant-input:focus),
+:deep(.ant-input-focused),
+:deep(.ant-input-number:focus),
+:deep(.ant-input-number-focused),
+:deep(.ant-select-focused .ant-select-selector){
+  border-color: rgba(0,53,128,.55) !important;
+  box-shadow: 0 0 0 3px rgba(0,53,128,.15) !important;
+}
+
+/* Tags look cleaner */
+:deep(.ant-tag){
+  border-radius: 999px;
+}
+
+/* Make page sections breathe a bit */
+.page-wrap{
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+@media (max-width: 768px){
+  .page-wrap{
+    padding: 12px;
+  }
+}

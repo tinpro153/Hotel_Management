@@ -29,8 +29,7 @@
 
       <a-row :gutter="[12,12]">
         <a-col v-for="r in suggestedRooms" :key="r.id" :xs="24" :sm="12" :lg="8">
-          <div class="sug-card ui-card" @click="goRoom(r.id)">
-            <!-- ✅ đồng bộ ảnh với RoomsPage: dùng roomCover(r) -->
+          <div class="sug-card ui-card ui-card-hover" @click="goRoom(r.id)">
             <div class="sug-img" :style="{ backgroundImage: `url(${roomCover(r)})` }"></div>
 
             <div class="sug-body">
@@ -41,6 +40,11 @@
 
               <div class="sug-loc ui-muted">
                 {{ (r.area ? r.area + ', ' : '') + (r.city || '') }}
+              </div>
+
+              <!-- ✅ mô tả theo loại phòng -->
+              <div class="sug-desc ui-muted">
+                {{ typeDesc(r.typeId) }}
               </div>
 
               <div class="sug-meta">
@@ -82,10 +86,10 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 
-import logoImg from '@/assets/images/logo.png' 
+import logoImg from '@/assets/images/logo.png'
 import { rooms, roomTypes } from '@/mock/hotel'
 import { useReviewsStore } from '@/stores/reviews.js'
-import { roomCover } from '@/utils/roomImages.js' 
+import { roomCover } from '@/utils/roomImages.js'
 
 const router = useRouter()
 const reviewsStore = useReviewsStore()
@@ -99,6 +103,9 @@ function goRoom(id) {
 
 function typeName(typeId) {
   return roomTypes.find(t => t.id === typeId)?.name || '—'
+}
+function typeDesc(typeId) {
+  return roomTypes.find(t => t.id === typeId)?.description || ''
 }
 
 function formatMoney(v) {
@@ -146,113 +153,32 @@ const suggestedRooms = computed(() => {
 </script>
 
 <style scoped>
-.hero{
-  background: linear-gradient(135deg, rgba(0,53,128,.10), rgba(254,187,2,.16));
-}
-
-.hero-inner{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap: 16px;
-}
-
-.hero-title{
-  font-weight: 950;
-  font-size: 22px;
-  color:#0f172a;
-}
-
-.hero-sub{
-  margin-top: 6px;
-  max-width: 520px;
-}
-
+.hero{ background: linear-gradient(135deg, rgba(0,53,128,.10), rgba(254,187,2,.16)); }
+.hero-inner{ display:flex; align-items:center; justify-content:space-between; gap: 16px; }
+.hero-title{ font-weight: 950; font-size: 22px; color:#0f172a; }
+.hero-sub{ margin-top: 6px; max-width: 520px; }
 .hero-right img{
-  width: 110px;
-  height: 110px;
-  object-fit: contain;
-  border-radius: 18px;
-  background: rgba(255,255,255,.55);
-  border: 1px solid rgba(15,23,42,.08);
-  padding: 12px;
+  width: 110px; height: 110px; object-fit: contain; border-radius: 18px;
+  background: rgba(255,255,255,.55); border: 1px solid rgba(15,23,42,.08); padding: 12px;
 }
 
-/* suggestion cards */
-.sug-card{
-  cursor:pointer;
-  overflow: hidden;
-  border-radius: 16px;
-  border: 1px solid rgba(15,23,42,.08);
-  box-shadow: 0 10px 24px rgba(15,23,42,.06);
-  background:#fff;
-}
-
-.sug-img{
-  height: 150px;
-  background-size: cover;
-  background-position: center;
-}
-
-.sug-body{
-  padding: 12px;
-}
-
-.sug-top{
-  display:flex;
-  justify-content:space-between;
-  gap: 10px;
-  align-items:flex-start;
-}
-
-.sug-name{
-  font-weight: 950;
-  line-height: 1.2;
-}
-
-.sug-loc{
-  margin-top: 6px;
-}
-
-.sug-meta{
-  display:flex;
-  gap: 10px;
-  flex-wrap:wrap;
-  margin-top: 10px;
-  color:#334155;
-}
-
-.sug-bottom{
-  margin-top: 12px;
-}
-
-.sug-price .price{
-  font-weight: 950;
-  font-size: 18px;
-}
-
-.sug-score{
-  display:flex;
-  gap: 10px;
-  align-items:center;
-  margin-top: 10px;
-}
-
+.sug-card{ cursor:pointer; overflow:hidden; border-radius: 16px; border: 1px solid rgba(15,23,42,.08); background:#fff; }
+.sug-img{ height: 150px; background-size: cover; background-position: center; }
+.sug-body{ padding: 12px; }
+.sug-top{ display:flex; justify-content:space-between; gap: 10px; align-items:flex-start; }
+.sug-name{ font-weight: 950; line-height: 1.2; }
+.sug-loc{ margin-top: 6px; }
+.sug-desc{ margin-top: 6px; font-size: 12px; line-height: 1.35; }
+.sug-meta{ display:flex; gap: 10px; flex-wrap:wrap; margin-top: 10px; color:#334155; }
+.sug-bottom{ margin-top: 12px; }
+.sug-price .price{ font-weight: 950; font-size: 18px; }
+.sug-score{ display:flex; gap: 10px; align-items:center; margin-top: 10px; }
 .sug-score .box{
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--bk-blue, #003580);
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight: 950;
+  width: 44px; height: 44px; border-radius: 12px; background: var(--bk-blue, #003580); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-weight: 950;
 }
+.sug-score .lbl{ font-weight: 900; }
 
-.sug-score .lbl{
-  font-weight: 900;
-}
 @media (max-width: 768px){
   .hero-inner{ flex-direction: column; align-items:flex-start; }
   .hero-right{ display:none; }

@@ -2,7 +2,7 @@ export const roomTypes = [
   { id: 1, name: 'Standard', description: 'Phòng tiêu chuẩn, phù hợp 1–2 khách.', priceBase: 550000, suggestedCapacity: 2 },
   { id: 2, name: 'Deluxe', description: 'Phòng rộng hơn, view đẹp, tiện nghi đầy đủ.', priceBase: 850000, suggestedCapacity: 2 },
   { id: 3, name: 'Suite', description: 'Hạng cao cấp, có phòng khách, trải nghiệm sang trọng.', priceBase: 1450000, suggestedCapacity: 3 },
-  { id: 4, name: 'Family', description: 'Phòng gia ��ình, phù hợp nhóm 3–5 khách.', priceBase: 1200000, suggestedCapacity: 4 }
+  { id: 4, name: 'Family', description: 'Phòng gia đình, phù hợp nhóm 3–5 khách.', priceBase: 1200000, suggestedCapacity: 4 }
 ]
 
 export const rooms = [
@@ -92,7 +92,42 @@ export const rooms = [
     city: 'Hà Nội',
     area: 'Ba Đình',
     address: '30 Liễu Giai, Ba Đình, Hà Nội'
-  },
+  },{
+  id: 204,
+  name: 'Family 204 - West Lake',
+  typeId: 4,
+  price: 1350000,
+  capacity: 4,
+  status: 'available',
+  amenities: ['Wifi', 'TV', 'Bồn tắm', 'Bếp nhỏ', 'View hồ'],
+  city: 'Hà Nội',
+  area: 'Tây Hồ',
+  address: '09 Trích Sài, Tây Hồ, Hà Nội'
+},
+{
+  id: 205,
+  name: 'Deluxe 205 - Business',
+  typeId: 2,
+  price: 920000,
+  capacity: 2,
+  status: 'available',
+  amenities: ['Wifi', 'TV', 'Bàn làm việc', 'Gần trung tâm'],
+  city: 'Hà Nội',
+  area: 'Cầu Giấy',
+  address: '36 Duy Tân, Cầu Giấy, Hà Nội'
+},
+{
+  id: 206,
+  name: 'Suite 206 - Landmark',
+  typeId: 3,
+  price: 1950000,
+  capacity: 3,
+  status: 'occupied',
+  amenities: ['Wifi', 'TV', 'Phòng khách', 'Bồn tắm', 'View thành phố'],
+  city: 'Hà Nội',
+  area: 'Ba Đình',
+  address: '02 Liễu Giai, Ba Đình, Hà Nội'
+},
 
   // TP.HCM
   {
@@ -131,6 +166,42 @@ export const rooms = [
     area: 'Thủ Đức',
     address: '22 Xa lộ Hà Nội, Thủ Đức, TP.HCM'
   },
+  {
+  id: 304,
+  name: 'Standard 304 - Cozy Corner',
+  typeId: 1,
+  price: 520000,
+  capacity: 2,
+  status: 'available',
+  amenities: ['Wifi', 'TV', 'Điều hòa', 'Gần trung tâm'],
+  city: 'TP. Hồ Chí Minh',
+  area: 'Quận 3',
+  address: '120 Võ Văn Tần, Quận 3, TP.HCM'
+},
+{
+  id: 305,
+  name: 'Deluxe 305 - Saigon River',
+  typeId: 2,
+  price: 1200000,
+  capacity: 2,
+  status: 'available',
+  amenities: ['Wifi', 'TV', 'View sông', 'Mini bar'],
+  city: 'TP. Hồ Chí Minh',
+  area: 'Bình Thạnh',
+  address: '05 Nguyễn Hữu Cảnh, Bình Thạnh, TP.HCM'
+},
+{
+  id: 306,
+  name: 'Suite 306 - Premium City',
+  typeId: 3,
+  price: 2350000,
+  capacity: 3,
+  status: 'available',
+  amenities: ['Wifi', 'TV', 'Phòng khách', 'Bồn tắm', 'View thành phố'],
+  city: 'TP. Hồ Chí Minh',
+  area: 'Quận 1',
+  address: '25 Lê Lợi, Quận 1, TP.HCM'
+},
 
   // Đà Lạt
   {
@@ -156,7 +227,44 @@ export const rooms = [
     city: 'Đà Lạt',
     area: 'Phường 8',
     address: '55 Phù Đổng Thiên Vương, Phường 8, Đà Lạt'
-  }
+  },
+  {
+  id: 403,
+  name: 'Suite 403 - Valley View',
+  typeId: 3,
+  price: 1450000,
+  capacity: 3,
+  status: 'available',
+  amenities: ['Wifi', 'TV', 'Sưởi', 'Ban công', 'View thung lũng'],
+  city: 'Đà Lạt',
+  area: 'Phường 10',
+  address: '20 Đường 3/4, Phường 10, Đà Lạt'
+},
+{
+  id: 404,
+  name: 'Family 404 - Garden House',
+  typeId: 4,
+  price: 1250000,
+  capacity: 4,
+  status: 'available',
+  amenities: ['Wifi', 'TV', 'Sưởi', 'Bếp nhỏ', 'Sân vườn'],
+  city: 'Đà Lạt',
+  area: 'Phường 3',
+  address: '07 Nguyễn Thị Minh Khai, Phường 3, Đà Lạt'
+},
+{
+  id: 405,
+  name: 'Deluxe 405 - Central',
+  typeId: 2,
+  price: 890000,
+  capacity: 2,
+  status: 'maintenance',
+  amenities: ['Wifi', 'TV', 'Sưởi', 'Gần chợ'],
+  city: 'Đà Lạt',
+  area: 'Phường 1',
+  address: '11 Nguyễn Chí Thanh, Phường 1, Đà Lạt'
+}
+  
 ]
 
 /**

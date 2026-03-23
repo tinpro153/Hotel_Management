@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router/index.js'
 import { createPinia } from 'pinia'
 import './styles/theme.css'
+import '@/styles/ui-polish.css'
 
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'

@@ -5,9 +5,16 @@
       <div class="rd-head">
         <div>
           <div class="rd-title">{{ room.name }}</div>
+
           <div class="rd-sub ui-muted">
             {{ room.address || ((room.area ? room.area + ', ' : '') + (room.city || '')) }}
           </div>
+
+          <!-- ✅ Mô tả theo loại phòng (roomTypes.description) -->
+          <div class="rd-type-desc ui-muted">
+            {{ typeDesc(room.typeId) }}
+          </div>
+
           <div class="rd-tags">
             <a-tag :color="statusColor(room.status)">{{ room.status }}</a-tag>
             <a-tag v-if="room.amenities?.includes('Wifi')" color="blue">Wifi</a-tag>
@@ -182,7 +189,7 @@ import dayjs from 'dayjs'
 import { rooms, roomTypes } from '@/mock/hotel'
 import { useBookingCartStore } from '@/stores/bookingCart.js'
 import { useReviewsStore } from '@/stores/reviews.js'
-import { roomGallery } from '@/utils/roomImages.js' // ✅ NEW
+import { roomGallery } from '@/utils/roomImages.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -192,8 +199,16 @@ const reviewsStore = useReviewsStore()
 const roomId = computed(() => Number(route.params.id))
 const room = computed(() => rooms.find(r => r.id === roomId.value))
 
-// ✅ đồng bộ gallery theo helper (cover của Home/Rooms = ảnh[0] của gallery)
 const images = computed(() => roomGallery(room.value, 5))
+
+function typeName(typeId) {
+  return roomTypes.find(t => t.id === typeId)?.name || '—'
+}
+
+/** ✅ mô tả theo loại phòng */
+function typeDesc(typeId) {
+  return roomTypes.find(t => t.id === typeId)?.description || ''
+}
 
 const previewOpen = ref(false)
 const previewIndex = ref(0)
@@ -264,10 +279,6 @@ function formatMoney(v) {
   return new Intl.NumberFormat('vi-VN').format(v)
 }
 
-function typeName(typeId) {
-  return roomTypes.find(t => t.id === typeId)?.name || '—'
-}
-
 const reviewSummary = computed(() => {
   if (!room.value) return { count: 0, overall: 0, breakdown: [] }
 
@@ -305,6 +316,14 @@ function scoreLabel(score) {
 .rd-head{ display:flex; justify-content:space-between; gap: 12px; align-items:flex-start; }
 .rd-title{ font-weight: 950; font-size: 22px; color: #0f172a; line-height: 1.2; }
 .rd-sub{ margin-top: 6px; }
+
+/* ✅ style cho mô tả */
+.rd-type-desc{
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
 .rd-tags{ margin-top: 10px; }
 .rd-price-box{ text-align:right; min-width: 140px; }
 .rd-price{ font-weight: 950; font-size: 22px; }

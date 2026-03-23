@@ -10,7 +10,7 @@
       </a-select>
 
       <a-button type="primary" @click="openCreate">Thêm phòng</a-button>
-      <a-popconfirm title="Reset về dữ liệu mẫu?" @confirm="store.resetSeed()">
+      <a-popconfirm title="Reset về dữ liệu mẫu?" @confirm="store.resetSeed(rooms)">
         <a-button>Reset seed</a-button>
       </a-popconfirm>
     </a-space>
@@ -114,7 +114,7 @@
 <script setup>
 import { computed, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
-import { roomTypes } from '@/mock/hotel'
+import { rooms, roomTypes } from '@/mock/hotel'
 import { useAdminRoomsStore } from '@/stores/adminRooms'
 
 const store = useAdminRoomsStore()
