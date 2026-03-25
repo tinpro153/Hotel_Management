@@ -5,10 +5,11 @@ export function roomGallery(room, count = 5) {
   if (!room) return []
   if (Array.isArray(room.images) && room.images.length) return room.images
 
+  // Dùng room.id làm seed cố định để ảnh luôn giống nhau
   return Array.from({ length: count }, (_, i) => {
-    const idx = i + 1
-    // ✅ seed thống nhất cho gallery
-    return `https://picsum.photos/seed/room-${room.id}-${idx}/1200/700`
+    const seed = `${room.id}-${i}`
+    // ✅ LoremFlickr: /width/height/category?seed=
+    return `https://loremflickr.com/1200/700/hotel,landscape?seed=${seed}`
   })
 }
 

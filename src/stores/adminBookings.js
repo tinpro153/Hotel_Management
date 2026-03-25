@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { bookings as seedBookings, rooms as seedRooms } from '@/mock/hotel'
+import { useAdminInventoryStore } from './adminInventory'
 
 const STORAGE_KEY = 'hotel_admin_bookings_v1'
 
@@ -29,6 +30,18 @@ function calcTotal(b, rooms) {
   const room = rooms.find(r => r.id === b.roomId)
   const nights = calcNights(b.checkIn, b.checkOut)
   return (Number(room?.price || 0) * nights) || 0
+}
+
+// Tạo list ngày từ checkIn đến checkOut (không bao gồm checkOut)
+function getDateRange(checkIn, checkOut) {
+  const dates = []
+  const current = new Date(checkIn)
+  const end = new Date(checkOut)
+  while (current < end) {
+    dates.push(current.toISOString().split('T')[0])
+    current.setDate(current.getDate() + 1)
+  }
+  return dates
 }
 
 export const useAdminBookingsStore = defineStore('adminBookings', {
@@ -63,6 +76,23 @@ export const useAdminBookingsStore = defineStore('adminBookings', {
       this.bookings.unshift({ ...booking, id: Number(booking.id) })
       save(this.bookings)
     },
+    // ===== Cập nhật inventory khi confirm booking =====
+    _updateInventoryForBooking(booking, status) {
+      const inv = useAdminInventoryStore()
+      if (!booking.checkIn || !booking.checkOut || !booking.roomId) return
+      
+      const dates = getDateRange(booking.checkIn, booking.checkOut)
+      if (status === 'occupied') {
+        dates.forEach(date => {
+          inv.setCell(booking.roomId, date, { status: 'occupied', note: `Booking #${booking.id}` })
+        })
+      } else if (status === 'available') {
+        // Xoá data inventory để trở thành available
+        dates.forEach(date => {
+          inv.clearCell(booking.roomId, date)
+        })
+      }
+    },
     update(id, patch) {
       const idx = this.bookings.findIndex(b => b.id === Number(id))
       if (idx === -1) throw new Error('Không tìm thấy booking')
@@ -94,6 +124,8 @@ export const useAdminBookingsStore = defineStore('adminBookings', {
       if (!b) throw new Error('Không tìm thấy booking')
       if (b.status !== 'pending') throw new Error('Chỉ xác nhận booking đang pending')
       this.setStatus(id, 'confirmed')
+      // ✅ Cập nhật inventory: phòng bị chiếm những ngày này
+      this._updateInventoryForBooking(b, 'occupied')
     },
     cancel(id) {
       const b = this.byId(id)
@@ -102,6 +134,8 @@ export const useAdminBookingsStore = defineStore('adminBookings', {
         throw new Error('Chỉ hủy booking pending/confirmed')
       }
       this.setStatus(id, 'cancelled')
+      // ✅ Xoá inventory: phòng trở thành available
+      this._updateInventoryForBooking(b, 'available')
     },
     noShow(id) {
       const b = this.byId(id)
@@ -120,6 +154,8 @@ export const useAdminBookingsStore = defineStore('adminBookings', {
       if (!b) throw new Error('Không tìm thấy booking')
       if (b.status !== 'checked_in') throw new Error('Check-out chỉ áp dụng cho checked_in')
       this.setStatus(id, 'checked_out')
+      // ✅ Cập nhật inventory: trở thành available sau check-out
+      this._updateInventoryForBooking(b, 'available')
     },
     refund(id, refundedAmount = 0) {
       const b = this.byId(id)

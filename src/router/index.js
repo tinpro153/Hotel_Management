@@ -11,9 +11,9 @@ import CartPage from '@/page/client/CartPage.vue'
 import CheckoutPage from '@/page/client/CheckoutPage.vue'
 import BookingsPage from '@/page/client/BookingsPage.vue'
 import WriteReviewPage from '@/page/client/WriteReviewPage.vue'
+import AdminLoginPage from '@/page/client/AdminLoginPage.vue'
 
 // Admin pages
-// import AdminLoginPage from '@/page/admin/AdminLoginPage.vue'
 import AdminDashboardPage from '@/page/admin/AdminDashboardPage.vue'
 import AdminRoomsPage from '@/page/admin/AdminRoomsPage.vue'
 import AdminRoomTypesPage from '@/page/admin/AdminRoomTypesPage.vue'
@@ -36,10 +36,11 @@ const routes = [
 
     ]
   },
-  // { path: '/admin/login', name: 'AdminLogin', component: AdminLoginPage },
+  { path: '/admin/login', name: 'AdminLogin', component: AdminLoginPage },
   {
     path: '/admin',
     component: AdminLayout,
+    meta: { requiresAuth: true },
     children: [
       { path: '', name: 'AdminDashboard', component: AdminDashboardPage },
       { path: 'rooms', name: 'AdminRooms', component: AdminRoomsPage },
@@ -51,7 +52,21 @@ const routes = [
   }
 ]
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes
 })
+
+// ===== Route guard: protect admin routes =====
+router.beforeEach((to, from, next) => {
+  const { useAuthStore } = require('@/stores/auth')
+  const authStore = useAuthStore()
+  
+  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
+    next({ name: 'AdminLogin', query: { redirect: to.fullPath } })
+  } else {
+    next()
+  }
+})
+
+export default router

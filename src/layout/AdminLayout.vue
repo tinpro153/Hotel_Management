@@ -61,6 +61,22 @@
     <a-layout>
       <a-layout-header class="ad-header">
         <div class="ad-title">Hotel Management</div>
+        <div class="ad-user-menu">
+          <a-dropdown>
+            <template #overlay>
+              <a-menu @click="handleMenu">
+                <a-menu-item key="logout">
+                  <template #icon><LogoutOutlined /></template>
+                  Đăng xuất
+                </a-menu-item>
+              </a-menu>
+            </template>
+            <a-button type="text">
+              {{ currentUser?.username || 'User' }}
+              <DownOutlined />
+            </a-button>
+          </a-dropdown>
+        </div>
       </a-layout-header>
 
       <a-layout-content class="ad-content">
@@ -75,6 +91,8 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { message } from 'ant-design-vue'
+import { useAuthStore } from '@/stores/auth'
 
 import {
   DashboardOutlined,
@@ -83,12 +101,24 @@ import {
   TagsOutlined,
   ProfileOutlined,
   TeamOutlined,
-  CalendarOutlined // NEW
+  CalendarOutlined,
+  LogoutOutlined,
+  DownOutlined
 } from '@ant-design/icons-vue'
 
 const collapsed = ref(false)
 const router = useRouter()
 const route = useRoute()
+const authStore = useAuthStore()
+
+const currentUser = computed(() => authStore.currentUser)
+function handleMenu(e) {
+  if (e.key === 'logout') {
+    authStore.logout()
+    message.success('Đã đăng xuất')
+    router.push('/admin/login')
+  }
+}
 
 const selectedKey = computed(() => {
   if (route.path === '/admin') return 'dashboard'
@@ -154,6 +184,11 @@ function go(path) {
 .ad-title{
   font-weight: 800;
   color:#111827;
+}
+
+.ad-user-menu{
+  display: flex;
+  align-items: center;
 }
 
 .ad-content{

@@ -67,13 +67,18 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useAdminRoomsStore } from '@/stores/adminRooms'
 import { useAdminInventoryStore } from '@/stores/adminInventory'
 import { message } from 'ant-design-vue'
 
 const roomsStore = useAdminRoomsStore()
 const inv = useAdminInventoryStore()
+
+// ===== Khởi tạo inventory từ bookings khi component mount =====
+onMounted(() => {
+  inv.initFromBookings()
+})
 
 const keyword = ref('')
 const days = ref(14)
