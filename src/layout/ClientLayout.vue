@@ -70,7 +70,7 @@
     </a-layout-content>
 
     <a-layout-footer class="bk-footer">
-      Hotel Manager UI — Vue 3 + Ant Design Vue
+      Hotel Manager 
     </a-layout-footer>
   </a-layout>
 </template>

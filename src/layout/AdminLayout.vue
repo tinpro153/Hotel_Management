@@ -12,12 +12,7 @@
         <span v-else>HA</span>
       </div>
 
-      <a-menu
-        theme="dark"
-        mode="inline"
-        :selectedKeys="[selectedKey]"
-        class="ad-menu"
-      >
+      <a-menu theme="dark" mode="inline" :selectedKeys="[selectedKey]" class="ad-menu">
         <a-menu-item key="dashboard" @click="go('/admin')">
           <template #icon><DashboardOutlined /></template>
           <span>Dashboard</span>
@@ -36,7 +31,7 @@
         <!-- NEW: Inventory -->
         <a-menu-item key="inventory" @click="go('/admin/inventory')">
           <template #icon><CalendarOutlined /></template>
-          <span>Tồn kho</span>
+          <span>Lịch đặt phòng</span>
         </a-menu-item>
 
         <a-menu-item key="bookings" @click="go('/admin/bookings')">
@@ -47,6 +42,12 @@
         <a-menu-item key="customers" @click="go('/admin/customers')">
           <template #icon><TeamOutlined /></template>
           <span>Khách hàng</span>
+        </a-menu-item>
+
+        <!-- ✅ NEW: Invoices -->
+        <a-menu-item key="invoices" @click="go('/admin/invoices')">
+          <template #icon><FileTextOutlined /></template>
+          <span>Hóa đơn</span>
         </a-menu-item>
 
         <a-menu-divider />
@@ -103,7 +104,8 @@ import {
   TeamOutlined,
   CalendarOutlined,
   LogoutOutlined,
-  DownOutlined
+  DownOutlined,
+  FileTextOutlined
 } from '@ant-design/icons-vue'
 
 const collapsed = ref(false)
@@ -124,9 +126,10 @@ const selectedKey = computed(() => {
   if (route.path === '/admin') return 'dashboard'
   if (route.path.startsWith('/admin/rooms')) return 'rooms'
   if (route.path.startsWith('/admin/room-types')) return 'roomTypes'
-  if (route.path.startsWith('/admin/inventory')) return 'inventory' // NEW
+  if (route.path.startsWith('/admin/inventory')) return 'inventory'
   if (route.path.startsWith('/admin/bookings')) return 'bookings'
   if (route.path.startsWith('/admin/customers')) return 'customers'
+  if (route.path.startsWith('/admin/invoices')) return 'invoices' // ✅ NEW
   return 'dashboard'
 })
 

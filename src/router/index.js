@@ -21,6 +21,9 @@ import AdminBookingsPage from '@/page/admin/AdminBookingsPage.vue'
 import AdminCustomersPage from '@/page/admin/AdminCustomersPage.vue'
 import AdminInventoryPage from '@/page/admin/AdminInventoryPage.vue'
 
+// ✅ NEW: Admin invoices page
+import AdminInvoicesPage from '@/page/admin/AdminInvoicesPage.vue'
+
 const routes = [
   {
     path: '/',
@@ -32,11 +35,14 @@ const routes = [
       { path: 'cart', name: 'Cart', component: CartPage },
       { path: 'checkout', name: 'Checkout', component: CheckoutPage },
       { path: 'bookings', name: 'Bookings', component: BookingsPage },
-      {path: '/write-review',name: 'WriteReview',component: WriteReviewPage}
 
+      // ✅ fix: child route không nên bắt đầu bằng "/"
+      { path: 'write-review', name: 'WriteReview', component: WriteReviewPage }
     ]
   },
+
   { path: '/admin/login', name: 'AdminLogin', component: AdminLoginPage },
+
   {
     path: '/admin',
     component: AdminLayout,
@@ -47,7 +53,10 @@ const routes = [
       { path: 'room-types', name: 'AdminRoomTypes', component: AdminRoomTypesPage },
       { path: 'bookings', name: 'AdminBookings', component: AdminBookingsPage },
       { path: 'customers', name: 'AdminCustomers', component: AdminCustomersPage },
-      { path: 'inventory', name: 'AdminInventory', component: AdminInventoryPage }
+      { path: 'inventory', name: 'AdminInventory', component: AdminInventoryPage },
+
+      // ✅ NEW: admin invoices
+      { path: 'invoices', name: 'AdminInvoices', component: AdminInvoicesPage }
     ]
   }
 ]
@@ -59,9 +68,10 @@ const router = createRouter({
 
 // ===== Route guard: protect admin routes =====
 router.beforeEach((to, from, next) => {
+  // giữ y như code của bạn
   const { useAuthStore } = require('@/stores/auth')
   const authStore = useAuthStore()
-  
+
   if (to.meta.requiresAuth && !authStore.isLoggedIn) {
     next({ name: 'AdminLogin', query: { redirect: to.fullPath } })
   } else {

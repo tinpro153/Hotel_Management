@@ -1,110 +1,137 @@
 <template>
-  <a-card title="Xác nhận đặt phòng (mock)" :bodyStyle="{ padding: '12px' }">
+  <a-card title="Hóa đơn thanh toán (mock)" :bodyStyle="{ padding: '12px' }">
     <a-alert
-      type="info"
+      v-if="!invoice"
+      type="warning"
       showIcon
-      message="Hiện tại chỉ là demo. Sau này kết nối API để tạo booking thật."
+      message="Không tìm thấy dữ liệu hóa đơn. Vui lòng quay lại giỏ và thanh toán."
       style="margin-bottom:12px"
     />
 
-    <a-form layout="vertical">
-      <a-row :gutter="12">
-        <a-col :xs="24" :sm="12">
-          <a-form-item label="Họ tên" required>
-            <a-input v-model:value="name" />
-          </a-form-item>
-        </a-col>
-        <a-col :xs="24" :sm="12">
-          <a-form-item label="Số điện thoại" required>
-            <a-input v-model:value="phone" />
-          </a-form-item>
-        </a-col>
-      </a-row>
+    <template v-else>
+      <!-- Trạng thái -->
+      <a-alert
+        v-if="paid"
+        type="success"
+        showIcon
+        :message="`Trạng thái: Đã thanh toán${invoice.paidAt ? ' • ' + formatDate(invoice.paidAt) : ''}`"
+        style="margin-bottom:12px"
+      />
+      <a-alert v-else type="info" showIcon message="Trạng thái: Chưa thanh toán" style="margin-bottom:12px" />
 
-      <a-form-item label="Ghi chú">
-        <a-textarea v-model:value="note" :rows="3" />
-      </a-form-item>
+      <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
+        <div>
+          <div><b>Mã hóa đơn:</b> {{ invoice.invoiceNo }}</div>
+          <div class="ui-muted">Ngày tạo: {{ formatDate(invoice.createdAt) }}</div>
+        </div>
 
-      <a-space wrap>
-        <a-button @click="goCart">Quay lại giỏ</a-button>
-        <a-button type="primary" :disabled="!cart.count" @click="placeOrder">
-          Đặt phòng
-        </a-button>
-      </a-space>
-    </a-form>
+        <a-space wrap>
+          <a-button @click="goBookings">Xem đơn đặt (/bookings)</a-button>
+          <a-button type="primary" @click="printInvoice">In hóa đơn</a-button>
+        </a-space>
+      </div>
+
+      <a-divider />
+
+      <a-descriptions bordered size="small" :column="1" style="margin-bottom:12px">
+        <a-descriptions-item label="Khách hàng">{{ invoice.customer.name }}</a-descriptions-item>
+        <a-descriptions-item label="Số điện thoại">{{ invoice.customer.phone }}</a-descriptions-item>
+        <a-descriptions-item label="Email">{{ invoice.customer.email }}</a-descriptions-item>
+        <a-descriptions-item label="Địa chỉ">{{ invoice.customer.address }}</a-descriptions-item>
+      </a-descriptions>
+
+      <a-table :dataSource="invoice.items" :columns="cols" rowKey="rowKey" :pagination="false" />
+
+      <a-divider />
+
+      <div style="display:flex; justify-content:space-between; align-items:center">
+        <div class="ui-muted">Tổng thanh toán</div>
+        <div style="font-weight:900; font-size:18px">{{ formatMoney(invoice.total) }}₫</div>
+      </div>
+
+      <a-divider />
+
+      <!-- ✅ CÁCH B: chỉ hiện QR khi CHƯA thanh toán -->
+      <div v-if="!paid" style="text-align:center">
+        <div style="font-weight:800; margin-bottom:8px">QR chuyển khoản (tham khảo)</div>
+        <img
+          :src="qrUrl"
+          alt="VietQR"
+          style="width:100%; max-width:360px; border:1px solid #eee; border-radius:12px"
+        />
+        <div class="ui-muted" style="margin-top:8px">
+          {{ invoice.bank.bankName }} - {{ invoice.bank.bankAccount }} - {{ invoice.bank.accountHolder }}
+        </div>
+        <div class="ui-muted">Nội dung: {{ invoice.bank.transferInfo }}</div>
+      </div>
+    </template>
   </a-card>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useBookingCartStore } from '@/stores/bookingCart'
-import { useAdminBookingsStore } from '@/stores/adminBookings'
-import { useAdminCustomersStore } from '@/stores/adminCustomers'
-import { message } from 'ant-design-vue'
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { buildVietQrUrl } from '@/utils/vietqr'
 
+const route = useRoute()
 const router = useRouter()
-const cart = useBookingCartStore()
 
-// stores mà /bookings đang dùng
-const bookingsStore = useAdminBookingsStore()
-const customersStore = useAdminCustomersStore()
-
-const name = ref('')
-const phone = ref('')
-const note = ref('')
-
-function goCart() {
-  router.push('/cart')
-}
-
-function validate() {
-  if (!cart.count) return 'Giỏ hàng đang trống'
-  if (!name.value.trim()) return 'Vui lòng nhập họ tên'
-  if (!phone.value.trim()) return 'Vui lòng nhập số điện thoại'
-  return ''
-}
-
-function nextId(list) {
-  const max = (list || []).reduce((m, x) => Math.max(m, Number(x.id || 0)), 0)
-  return max + 1
-}
-
-function placeOrder() {
-  const err = validate()
-  if (err) {
-    message.error(err)
-    return
+function safeDecodeInvoice(s) {
+  try {
+    const json = decodeURIComponent(escape(atob(String(s || ''))))
+    return JSON.parse(json)
+  } catch {
+    return null
   }
+}
 
-  // 1. Tạo customer mới
-  const customerId = nextId(customersStore.customers)
-  customersStore.create({
-    id: customerId,
-    name: name.value.trim(),
-    phone: phone.value.trim(),
-    email: '' // 
+const invoice = computed(() => safeDecodeInvoice(route.query.invoice))
+
+// ✅ CÁCH B: lấy paid từ invoice
+const paid = computed(() => !!invoice.value?.paid)
+
+const cols = [
+  { title: 'Phòng', dataIndex: 'roomName', key: 'roomName' },
+  { title: 'Check-in', dataIndex: 'checkIn', key: 'checkIn', width: 120 },
+  { title: 'Check-out', dataIndex: 'checkOut', key: 'checkOut', width: 120 },
+  { title: 'Khách', dataIndex: 'guests', key: 'guests', width: 80 },
+  {
+    title: 'Giá',
+    dataIndex: 'price',
+    key: 'price',
+    width: 140,
+    customRender: ({ text }) => formatMoney(text)
+  }
+].map((c, idx) => ({ ...c, rowKey: idx }))
+
+const qrUrl = computed(() => {
+  if (!invoice.value) return ''
+  return buildVietQrUrl({
+    bankName: invoice.value.bank.bankName,
+    bankAccount: invoice.value.bank.bankAccount,
+    accountHolder: invoice.value.bank.accountHolder,
+    amount: invoice.value.total,
+    addInfo: invoice.value.bank.transferInfo
   })
+})
 
-  // 2. Tạo booking cho từng item trong cart
-  cart.items.forEach((it) => {
-    const bookingId = nextId(bookingsStore.bookings)
+function formatMoney(v) {
+  return new Intl.NumberFormat('vi-VN').format(Number(v || 0))
+}
 
-    bookingsStore.create({
-      id: bookingId,
-      roomId: Number(it.roomId),
-      customerId,
-      checkIn: it.checkIn,
-      checkOut: it.checkOut,
-      guests: Number(it.guests || 1),
-      status: 'pending',
-      note: note.value || ''
-    })
-  })
+function formatDate(iso) {
+  try {
+    return new Date(iso).toLocaleString('vi-VN')
+  } catch {
+    return iso
+  }
+}
 
-  // 3. Clear cart + chuyển sang /bookings
-  cart.clear()
-  message.success('Đặt phòng thành công')
+function printInvoice() {
+  window.print()
+}
+
+function goBookings() {
   router.push('/bookings')
 }
 </script>
