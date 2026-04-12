@@ -134,6 +134,15 @@
                 </div>
               </a-form-item>
 
+              <!-- ✅ NEW: cảnh báo trùng ngày -->
+              <a-alert
+                v-if="dateConflict"
+                type="error"
+                showIcon
+                message="Phòng đã được đặt trong khoảng ngày này. Vui lòng chọn ngày khác."
+                style="margin-bottom:12px"
+              />
+
               <a-form-item label="Số khách">
                 <a-input-number v-model:value="guests" :min="1" :max="10" style="width:100%" />
                 <div class="ui-muted" style="margin-top:6px">
@@ -166,9 +175,12 @@
 
               <a-space style="margin-top:12px" wrap>
                 <a-button @click="goRooms">Quay lại</a-button>
-                <a-button type="primary" :disabled="!canAdd" @click="addToCart">
+
+                <!-- ✅ NEW: disable khi conflict -->
+                <a-button type="primary" :disabled="!canAdd || dateConflict" @click="addToCart">
                   Thêm vào giỏ
                 </a-button>
+
                 <a-button type="default" @click="goCart">Tới giỏ</a-button>
               </a-space>
             </a-form>
@@ -185,29 +197,35 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import dayjs from 'dayjs'
+import { message } from 'ant-design-vue' // ✅ NEW
 
 import { rooms, roomTypes } from '@/mock/hotel'
 import { useBookingCartStore } from '@/stores/bookingCart.js'
 import { useReviewsStore } from '@/stores/reviews.js'
 import { roomGallery } from '@/utils/roomImages.js'
 
+// ✅ NEW: check occupied sớm
+import { useAdminBookingsStore } from '@/stores/adminBookings'
+import { hasRoomConflict } from '@/utils/bookingOverlap'
+
 const route = useRoute()
 const router = useRouter()
 const cart = useBookingCartStore()
 const reviewsStore = useReviewsStore()
+const bookingsStore = useAdminBookingsStore() // ✅ NEW
 
 const roomId = computed(() => Number(route.params.id))
-const room = computed(() => rooms.find(r => r.id === roomId.value))
+const room = computed(() => rooms.find((r) => r.id === roomId.value))
 
 const images = computed(() => roomGallery(room.value, 5))
 
 function typeName(typeId) {
-  return roomTypes.find(t => t.id === typeId)?.name || '—'
+  return roomTypes.find((t) => t.id === typeId)?.name || '—'
 }
 
 /** ✅ mô tả theo loại phòng */
 function typeDesc(typeId) {
-  return roomTypes.find(t => t.id === typeId)?.description || ''
+  return roomTypes.find((t) => t.id === typeId)?.description || ''
 }
 
 const previewOpen = ref(false)
@@ -226,6 +244,9 @@ function nextImg() {
 const range = ref([dayjs('2026-03-22', 'YYYY-MM-DD'), dayjs('2026-03-23', 'YYYY-MM-DD')])
 const guests = ref(2)
 
+const checkIn = computed(() => (range.value?.[0] ? range.value[0].format('YYYY-MM-DD') : ''))
+const checkOut = computed(() => (range.value?.[1] ? range.value[1].format('YYYY-MM-DD') : ''))
+
 const nights = computed(() => {
   if (!range.value?.[0] || !range.value?.[1]) return 0
   const n = range.value[1].startOf('day').diff(range.value[0].startOf('day'), 'day')
@@ -235,6 +256,23 @@ const nights = computed(() => {
 const total = computed(() => {
   if (!room.value) return 0
   return room.value.price * (nights.value || 0)
+})
+
+/**
+ * ✅ NEW: báo trùng ngày theo từng phòng (roomId)
+ * Dựa vào bookingsStore.bookings đã có
+ */
+const dateConflict = computed(() => {
+  if (!room.value) return false
+  if (!checkIn.value || !checkOut.value) return false
+  if (nights.value <= 0) return false
+
+  return hasRoomConflict({
+    roomId: room.value.id,
+    checkIn: checkIn.value,
+    checkOut: checkOut.value,
+    bookings: bookingsStore.bookings || []
+  })
 })
 
 const canAdd = computed(() => {
@@ -248,17 +286,24 @@ const canAdd = computed(() => {
 })
 
 function addToCart() {
-  const checkIn = range.value[0].format('YYYY-MM-DD')
-  const checkOut = range.value[1].format('YYYY-MM-DD')
+  if (!room.value) return
+
+  if (dateConflict.value) {
+    message.error('Phòng đã được đặt trùng ngày. Vui lòng chọn ngày khác.')
+    return
+  }
 
   cart.addRoom({
     roomId: room.value.id,
     roomName: room.value.name,
     price: total.value,
-    checkIn,
-    checkOut,
+    checkIn: checkIn.value,
+    checkOut: checkOut.value,
     guests: guests.value
   })
+
+  // ✅ NEW: thông báo thêm vào giỏ thành công
+  message.success('Thêm vào giỏ thành công')
 }
 
 function goCart() {
