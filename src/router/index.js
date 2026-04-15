@@ -20,9 +20,10 @@ import AdminRoomTypesPage from '@/page/admin/AdminRoomTypesPage.vue'
 import AdminBookingsPage from '@/page/admin/AdminBookingsPage.vue'
 import AdminCustomersPage from '@/page/admin/AdminCustomersPage.vue'
 import AdminInventoryPage from '@/page/admin/AdminInventoryPage.vue'
-
-// ✅ NEW: Admin invoices page
 import AdminInvoicesPage from '@/page/admin/AdminInvoicesPage.vue'
+
+// ✅ NEW: admin invoice detail page (export PDF)
+import AdminInvoiceDetailPage from '@/page/admin/AdminInvoiceDetailPage.vue'
 
 const routes = [
   {
@@ -36,7 +37,7 @@ const routes = [
       { path: 'checkout', name: 'Checkout', component: CheckoutPage },
       { path: 'bookings', name: 'Bookings', component: BookingsPage },
 
-      // ✅ fix: child route không nên bắt đầu bằng "/"
+      // child route không nên bắt đầu bằng "/"
       { path: 'write-review', name: 'WriteReview', component: WriteReviewPage }
     ]
   },
@@ -55,8 +56,11 @@ const routes = [
       { path: 'customers', name: 'AdminCustomers', component: AdminCustomersPage },
       { path: 'inventory', name: 'AdminInventory', component: AdminInventoryPage },
 
-      // ✅ NEW: admin invoices
-      { path: 'invoices', name: 'AdminInvoices', component: AdminInvoicesPage }
+      // invoices
+      { path: 'invoices', name: 'AdminInvoices', component: AdminInvoicesPage },
+
+      // ✅ NEW: invoice detail (admin)
+      { path: 'invoices/:id', name: 'AdminInvoiceDetail', component: AdminInvoiceDetailPage }
     ]
   }
 ]
